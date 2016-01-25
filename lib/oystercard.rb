@@ -8,16 +8,16 @@ class Oystercard
 
   def initialize
     @balance = DEFAULT_BALANCE
-    @hist = []
+    @journeys = []
   end
 
   def topup(value)
-    fail "Exceeded max limit: #{MAX_LIMIT}" if @balance + value >= MAX_LIMIT
+    fail "Exceeded max limit: #{MAX_LIMIT}" if balance + value > MAX_LIMIT
     @balance += value
   end
 
   def in_journey?
-    !@entry_station.nil?
+    true if @entry_station
   end
 
   def touch_in station
@@ -29,12 +29,12 @@ class Oystercard
   def touch_out station
     deduct(MIN_FARE)
     @exit_station = station
-    @hist << {entry_station => exit_station}
+    @journeys << {entry_station: entry_station, exit_station: exit_station}
     @entry_station = nil
   end
 
-  def hist
-    @hist.clone
+  def journeys
+    @journeys.clone
   end
 
   private
