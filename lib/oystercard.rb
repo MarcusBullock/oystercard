@@ -1,7 +1,7 @@
 class Oystercard
   attr_reader :balance
 
-MAX_BALANCE = 90
+  MAX_BALANCE = 90
 
   def initialize
     @balance = 0
@@ -18,11 +18,16 @@ MAX_BALANCE = 90
   end
 
   def touch_in(station)
+    # TODO: store station in instance var
     @in_journey = true
+  end
+
+  def touch_out(station)
+    # TODO: store station in instance var
+    @in_journey = false
   end
 
   def in_journey?
     @in_journey
   end
-
 end

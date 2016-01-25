@@ -34,13 +34,21 @@ describe Oystercard do
   describe '#touch_in' do
     it { is_expected.to respond_to(:touch_in).with(1).argument }
 
-    it 'returns that card is in journey' do
+    it 'sets card status to in journey' do
       oystercard.touch_in(station)
       expect(oystercard).to be_in_journey
     end
-
-
   end
 
+  describe '#touch_out' do
+    it { is_expected.to respond_to(:touch_out).with(1).argument }
+
+    it 'sets card status to not in journey' do
+      # NOTE: refactor to before statement?
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      expect(oystercard).not_to be_in_journey
+    end
+  end
 
 end
