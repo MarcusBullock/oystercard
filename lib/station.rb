@@ -1,2 +1,1 @@
-class Station
-end
+Station = Struct.new :name, :zone
