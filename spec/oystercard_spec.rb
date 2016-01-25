@@ -6,9 +6,20 @@ describe Oystercard do
   end
 
   describe '#top_up' do
+
+    subject(:oystercard){described_class.new(1)}
+
     it { is_expected.to respond_to(:top_up).with(1).argument }
+
     it 'should adjust value of balance by top_up argument' do
-      expect {subject.top_up(1)}.to change {subject.balance}.by(1)
+      expect {oystercard.top_up(1)}.to change {oystercard.balance}.by(1)
     end
+
+    it 'should reject top-up if it exceeds maximum value' do
+      expect {oystercard.top_up(100)}.to raise_error ("Can't top up past £100")
+    end
+
+
+
   end
 end
