@@ -52,21 +52,12 @@ describe Oystercard do
   context 'adding entry and exit stations' do
     before {subject.topup(min_fare); subject.touch_in(entry_station)}
     it 'stores the entry station' do
-      expect(subject.entry_station).to be entry_station
-    end
-
-    it 'removes station on touchout' do
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to be nil
+      expect(subject.journey.values).to include entry_station
     end
 
     it 'stores exit station' do
       subject.touch_out(exit_station)
-      expect(subject.exit_station).to be exit_station
-  end
-
-    it 'removes exit station on touchin' do
-      expect(subject.exit_station).to be nil
+      expect(subject.journeys[0].values).to include exit_station
     end
   end
 
