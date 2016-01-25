@@ -14,5 +14,8 @@ class Oystercard
     fail "Can't top up past £100" if (value > (DEFAULT_MAX - @balance))
     @balance += value
   end
-  
+
+  def deduct_credit(fee)
+    @balance -= fee
+  end
 end

@@ -18,8 +18,15 @@ describe Oystercard do
     it 'should reject top-up if it exceeds maximum value' do
       expect {oystercard.top_up(100)}.to raise_error ("Can't top up past £100")
     end
+  end
 
+  describe '#deduct_credit' do
 
+    subject(:oystercard){described_class.new(10)}
 
+    it { is_expected.to respond_to(:deduct_credit).with(1).argument}
+    it 'should deduct fee argument from @balance' do
+      expect {oystercard.deduct_credit(5)}.to change {oystercard.balance}.by(-5)
+    end
   end
 end
