@@ -34,6 +34,12 @@ describe Oystercard do
 
     subject(:oystercard){described_class.new}
 
+    it 'Should deduct minimum fare at end of journey' do
+      # stub_const(Oystercard::DEFAULT_MIN_FARE, 2)
+      oystercard.check_in
+      expect {oystercard.check_out}.to change {oystercard.balance}.by(- Oystercard::DEFAULT_MIN_FARE)
+    end
+
     it 'should change checked in status to true' do
       expect {oystercard.check_in}.to change {oystercard.checked_in}.from(false).to(true)
     end
@@ -42,8 +48,5 @@ describe Oystercard do
       oystercard.check_in
       expect {oystercard.check_out}.to change {oystercard.checked_in}.from(true).to(false)
     end
-
-
   end
-
 end

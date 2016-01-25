@@ -4,6 +4,7 @@ class Oystercard
 
   DEFAULT_BALANCE = 0
   DEFAULT_MAX = 100
+  DEFAULT_MIN_FARE = 2
 
   attr_reader :balance
   attr_reader :checked_in
@@ -23,16 +24,22 @@ class Oystercard
     @balance -= fee
   end
 
+  def subtract_min_fare
+    @balance -= DEFAULT_MIN_FARE
+  end
+
   def check_in
     @checked_in = true
   end
 
   def check_out
     @checked_in = false
+    subtract_min_fare
   end
 
   def travelling?
     @checked_in
   end
+
 
 end
