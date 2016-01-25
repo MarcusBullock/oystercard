@@ -29,4 +29,21 @@ describe Oystercard do
       expect {oystercard.deduct_credit(5)}.to change {oystercard.balance}.by(-5)
     end
   end
+
+  describe "#travelling" do
+
+    subject(:oystercard){described_class.new}
+
+    it 'should change checked in status to true' do
+      expect {oystercard.check_in}.to change {oystercard.checked_in}.from(false).to(true)
+    end
+
+    it 'should change checked in status to false' do
+      oystercard.check_in
+      expect {oystercard.check_out}.to change {oystercard.checked_in}.from(true).to(false)
+    end
+
+
+  end
+
 end
