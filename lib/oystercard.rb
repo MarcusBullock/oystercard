@@ -25,6 +25,7 @@ class Oystercard
   end
 
   def subtract_min_fare
+    fail "You do not have enough money" if @balance < DEFAULT_MIN_FARE
     @balance -= DEFAULT_MIN_FARE
   end
 

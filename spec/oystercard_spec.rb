@@ -32,12 +32,19 @@ describe Oystercard do
 
   describe "#travelling" do
 
-    subject(:oystercard){described_class.new}
+    subject(:oystercard){described_class.new(20)}
 
     it 'Should deduct minimum fare at end of journey' do
-      # stub_const(Oystercard::DEFAULT_MIN_FARE, 2)
       oystercard.check_in
       expect {oystercard.check_out}.to change {oystercard.balance}.by(- Oystercard::DEFAULT_MIN_FARE)
+    end
+
+    it 'raises error if you dont have any money' do
+      x = Oystercard.new(1)
+
+
+    #   subject(:oystercard){described_class.new(1)}
+      expect {x.subtract_min_fare}.to raise_error ("You do not have enough money")
     end
 
     it 'should change checked in status to true' do
