@@ -15,10 +15,6 @@ class Oystercard
     @balance += amount
   end
 
-  def deduct amount
-    @balance -= amount
-  end
-
   def touch_in(station)
     fail "Insufficient balance" if balance < MIN_FARE
     # TODO: store station in instance var
@@ -26,6 +22,7 @@ class Oystercard
   end
 
   def touch_out(station)
+    deduct(MIN_FARE)
     # TODO: store station in instance var
     @in_journey = false
   end
@@ -33,4 +30,11 @@ class Oystercard
   def in_journey?
     @in_journey
   end
+
+  private
+  
+  def deduct amount
+    @balance -= amount
+  end
+
 end

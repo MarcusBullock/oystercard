@@ -30,14 +30,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it { is_expected.to respond_to(:deduct).with(1).argument }
-
-    it 'deducts amount from card balance' do
-      expect { oystercard.deduct 10 }.to change{ oystercard.balance }.by(-10)
-    end
-  end
-
   describe '#touch_in' do
     it { is_expected.to respond_to(:touch_in).with(1).argument }
 
@@ -62,6 +54,11 @@ describe Oystercard do
       oystercard.touch_in(station)
       oystercard.touch_out(station)
       expect(oystercard).not_to be_in_journey
+    end
+
+    it 'deducts the journey fee from balance' do
+      oystercard.touch_in(station)
+      expect{oystercard.touch_out(station)}.to change{oystercard.balance}.by (- described_class::MIN_FARE)
     end
   end
 
