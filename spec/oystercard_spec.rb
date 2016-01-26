@@ -5,7 +5,8 @@ describe Oystercard do
   let(:station) {double :station}
 
   describe '#initialize' do
-    let(:new_card) { described_class.new }
+    subject(:new_card) { described_class.new }
+    it { is_expected.to respond_to(:balance, :entry_station) }
     it 'initializes with a balance of 0' do
       expect(new_card.balance).to eq(0)
     end
@@ -38,6 +39,11 @@ describe Oystercard do
       expect(oystercard).to be_in_journey
     end
 
+    it 'stores entry station' do
+      oystercard.touch_in(station)
+      expect(oystercard.entry_station).to eq station
+    end
+
     context 'when balance is below minimum fare' do
       let(:empty_card) { described_class.new }
       it 'raises an error' do
@@ -50,15 +56,21 @@ describe Oystercard do
   describe '#touch_out' do
     it { is_expected.to respond_to(:touch_out).with(1).argument }
 
-    it 'sets card status to not in journey' do
+    before(:each) do
       oystercard.touch_in(station)
+    end
+
+    it 'sets card status to not in journey' do
       oystercard.touch_out(station)
       expect(oystercard).not_to be_in_journey
     end
 
     it 'deducts the journey fee from balance' do
-      oystercard.touch_in(station)
-      expect{oystercard.touch_out(station)}.to change{oystercard.balance}.by (- described_class::MIN_FARE)
+      expect{ oystercard.touch_out(station) }.to change{ oystercard.balance }.by (-described_class::MIN_FARE)
+    end
+
+    it 'resets entry station' do
+      expect{ oystercard.touch_out(station) }.to change{ oystercard.entry_station }.from(station).to(nil)
     end
   end
 
