@@ -5,7 +5,7 @@ describe Oystercard do
   let(:entry_station){ double(:station) }
   let(:exit_station){ double(:station) }
   let(:journey_klass){ double('journey_klass')}
-  let(:journey){ double(:journey, nil?: false) }
+  let(:journey){ double(:journey) }
 
   min_fare = Oystercard::MIN_FARE
 
@@ -27,7 +27,7 @@ describe Oystercard do
   end
 
   describe '#touch in and out' do
-    before {subject.topup(min_fare); subject.touch_in(entry_station)}
+    before {subject.topup(20); subject.touch_in(entry_station)}
 
     it 'show that user is in journey when touched in' do
       expect(subject).to be_in_journey
@@ -41,11 +41,25 @@ describe Oystercard do
     it 'applies penalty fare if you touch in twice' do
       allow(journey_klass).to receive(:new) {journey}
       allow(journey).to receive(:start_journey){:entry_station}
-      allow(journey).to receive(:calculate_fare)
-      subject.touch_in(entry_station)
+      allow(journey).to receive(:calculate_fare){Journey::PENALTY_FARE}
+
+      subject.touch_in(entry_station,journey_klass)
       expect(journey).to receive(:calculate_fare)
-      subject.touch_in(entry_station)
+      subject.touch_in(entry_station, journey_klass)
     end
+
+  describe 'new test' do
+    it 'applies penalty fare if you touch out twice' do
+      subject.topup(20)
+      allow(journey_klass).to receive(:new) {journey}
+      allow(journey).to receive(:end_journey){:exit_station}
+      allow(journey).to receive(:calculate_fare){Journey::PENALTY_FARE}
+      subject.touch_out(exit_station,journey_klass)
+      expect(journey).to receive(:calculate_fare)
+      subject.touch_out(exit_station,journey_klass)
+    end
+  end
+
   end
 
   context 'requiring minimum balance' do

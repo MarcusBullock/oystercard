@@ -25,12 +25,13 @@ class Oystercard
 
   def touch_in(station,journey_klass=Journey)
     fail 'low balance' if balance < MIN_FARE
-    deduct(@journey_new.calculate_fare) if @journey_new.nil?
+    deduct(@journey_new.calculate_fare) if in_journey?
     @journey_new = journey_klass.new
     @journey_new.start_journey(station)
   end
 
-  def touch_out station
+  def touch_out(station,journey_klass=Journey)
+    @journey_new ||= journey_klass.new
     @journey_new.end_journey(station)
     deduct(@journey_new.calculate_fare)
     @hist << @journey_new
