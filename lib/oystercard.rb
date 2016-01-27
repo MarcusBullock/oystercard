@@ -1,3 +1,4 @@
+require 'journey'
 class Oystercard
 
   attr_reader :balance, :journey
@@ -8,7 +9,7 @@ class Oystercard
 
   def initialize
     @balance = DEFAULT_BALANCE
-    @journeys = []
+    @hist = []
   end
 
   def topup(value)
@@ -20,20 +21,22 @@ class Oystercard
     !!@journey
   end
 
-  def touch_in station
+  def touch_in(station,journey_klass=Journey)
     fail 'low balance' if balance < MIN_FARE
+    journey_new = journey_klass.new
+    journey_new.start_journey(station)
     @journey = {entry_station: station}
   end
 
   def touch_out station
     deduct(MIN_FARE)
     @journey[:exit_station] = station
-    @journeys << @journey
+    @hist << @journey
     @journey = nil
   end
 
-  def journeys
-    @journeys.clone
+  def hist
+    @hist.clone
   end
 
   private
