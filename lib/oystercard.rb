@@ -1,4 +1,6 @@
-require 'journey'
+require_relative 'journey'
+
+
 class Oystercard
 
   attr_reader :balance, :journey
@@ -18,21 +20,21 @@ class Oystercard
   end
 
   def in_journey?
-    !!@journey
+    !!@journey_new
   end
 
   def touch_in(station,journey_klass=Journey)
     fail 'low balance' if balance < MIN_FARE
-    journey_new = journey_klass.new
-    journey_new.start_journey(station)
-    @journey = {entry_station: station}
+    deduct(@journey_new.calculate_fare) if @journey_new.nil?
+    @journey_new = journey_klass.new
+    @journey_new.start_journey(station)
   end
 
   def touch_out station
-    deduct(MIN_FARE)
-    @journey[:exit_station] = station
-    @hist << @journey
-    @journey = nil
+    @journey_new.end_journey(station)
+    deduct(@journey_new.calculate_fare)
+    @hist << @journey_new
+    @journey_new = nil
   end
 
   def hist

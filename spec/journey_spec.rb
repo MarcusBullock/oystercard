@@ -32,5 +32,6 @@ describe Journey do
       2.times{subject.start_journey(entry_station)}
       expect(subject.calculate_fare).to eq Journey::PENALTY_FARE
     end
+
   end
 end

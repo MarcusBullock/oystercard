@@ -5,7 +5,7 @@ describe Oystercard do
   let(:entry_station){ double(:station) }
   let(:exit_station){ double(:station) }
   let(:journey_klass){ double('journey_klass')}
-  let(:journey){ double(:journey) }
+  let(:journey){ double(:journey, nil?: false) }
 
   min_fare = Oystercard::MIN_FARE
 
@@ -37,6 +37,15 @@ describe Oystercard do
       subject.touch_out(exit_station)
       expect(subject).not_to be_in_journey
     end
+
+    it 'applies penalty fare if you touch in twice' do
+      allow(journey_klass).to receive(:new) {journey}
+      allow(journey).to receive(:start_journey){:entry_station}
+      allow(journey).to receive(:calculate_fare)
+      subject.touch_in(entry_station)
+      expect(journey).to receive(:calculate_fare)
+      subject.touch_in(entry_station)
+    end
   end
 
   context 'requiring minimum balance' do
@@ -52,41 +61,63 @@ describe Oystercard do
     end
   end
 
-  context 'adding entry and exit stations' do
+
+  context 'using journey double' do
+
     before do
-      subject.topup(min_fare);
       allow(journey_klass).to receive(:new) {journey}
       allow(journey).to receive(:start_journey)
-    end
-    it 'checks if it receives start_journey' do
-      expect(journey).to receive(:start_journey).with(entry_station) #{entry_station}
-      subject.touch_in(entry_station,journey_klass)
-    end
-
-    it 'stores exit station' do
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.hist[0].values).to include exit_station
+      allow(journey).to receive(:calculate_fare){Oystercard::MIN_FARE}
+      allow(journey).to receive(:start_journey){:entry_station}
+      allow(journey).to receive(:end_journey){:exit_station}
     end
 
-    it 'delete the journey when do ' do
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.journey).to be nil
-    end
-  end
+    context 'adding entry and exit stations' do
 
-  context 'journey history' do
-    let(:journey) {{entry_station: entry_station, exit_station: exit_station}}
-    it 'journey history is empty' do
-      expect(subject.hist).to eq []
+      before do
+        subject.topup(min_fare)
+      end
+
+      it 'checks if it receives start_journey' do
+        expect(journey).to receive(:start_journey).with(entry_station) #{entry_station}
+        subject.touch_in(entry_station,journey_klass)
+      end
+
+      it 'checks if it receives end_journey' do
+        subject.touch_in(entry_station,journey_klass)
+        expect(journey).to receive(:end_journey).with(exit_station)
+        subject.touch_out(exit_station)
+      end
+
+      it 'delete the journey when do ' do
+        subject.touch_in(entry_station)
+        subject.touch_out(exit_station)
+        expect(subject.journey).to be nil
+      end
     end
 
-    it 'adds one journey history per trip' do
-      subject.topup(min_fare)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.hist).to include journey
+    context 'journey history' do
+
+      it 'journey history is empty' do
+        expect(subject.hist).to eq []
+      end
+
+      it 'adds one journey history per trip' do
+        subject.topup(min_fare)
+        subject.touch_in(entry_station, journey_klass)
+        subject.touch_out(exit_station)
+        expect(subject.hist).to include journey
+      end
+    end
+
+    describe 'calculating fare' do
+
+      it 'checks if it can calculate a fare' do
+        subject.topup(min_fare)
+        subject.touch_in(entry_station,journey_klass)
+        expect(journey).to receive(:calculate_fare)
+        subject.touch_out(exit_station)
+      end
     end
   end
 end
