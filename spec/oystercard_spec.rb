@@ -59,6 +59,11 @@ describe Oystercard do
       subject.touch_out(exit_station)
       expect(subject.journeys[0].values).to include exit_station
     end
+
+    it 'delete the journey when do ' do
+      subject.touch_out(exit_station)
+      expect(subject.journey).to be nil
+    end
   end
 
   context 'journey history' do
