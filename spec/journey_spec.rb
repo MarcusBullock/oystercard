@@ -32,6 +32,20 @@ describe Journey do
       2.times{subject.start_journey(entry_station)}
       expect(subject.calculate_fare).to eq Journey::PENALTY_FARE
     end
-
   end
+
+  describe '#completed?' do
+
+    it 'tells us a journey is completed' do
+      subject.start_journey(entry_station)
+      subject.end_journey(exit_station)
+      expect(subject).to be_completed
+    end
+
+    it 'tells us a journey is not completed' do
+      subject.start_journey(entry_station)
+      expect(subject).not_to be_completed
+    end
+  end
+
 end

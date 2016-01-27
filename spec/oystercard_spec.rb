@@ -47,6 +47,7 @@ describe Oystercard do
       expect(journey).to receive(:calculate_fare)
       subject.touch_in(entry_station, journey_klass)
     end
+  end
 
   describe 'new test' do
     it 'applies penalty fare if you touch out twice' do
@@ -54,11 +55,11 @@ describe Oystercard do
       allow(journey_klass).to receive(:new) {journey}
       allow(journey).to receive(:end_journey){:exit_station}
       allow(journey).to receive(:calculate_fare){Journey::PENALTY_FARE}
+      #expect(subject.balance).to eq 14
+      expect(journey).to receive(:calculate_fare){Journey::PENALTY_FARE}
       subject.touch_out(exit_station,journey_klass)
-      expect(journey).to receive(:calculate_fare)
-      subject.touch_out(exit_station,journey_klass)
+      #subject.touch_out(exit_station,journey_klass)
     end
-  end
 
   end
 

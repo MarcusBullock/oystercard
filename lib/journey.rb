@@ -15,4 +15,7 @@ class Journey
     @entry_station && @exit_station ? Oystercard::MIN_FARE : PENALTY_FARE
   end
 
+  def completed?
+    true if @exit_station && @entry_station
+  end
 end
