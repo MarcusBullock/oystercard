@@ -4,6 +4,7 @@ require_relative 'journey'
 class Oystercard
 
   attr_reader :balance, :journey_list, :entry_station, :journey_class, :current_journey
+  
   BALANCE_MAX = 90
 
   def initialize(journey_class = Journey)
@@ -22,7 +23,6 @@ class Oystercard
     end_journey(nil)
     end
     raise 'Please top up your card.' if @balance < Journey::FARE_MIN
-    # @entry_station = station
     @current_journey = @journey_class.new(station)
   end
 
@@ -41,7 +41,6 @@ class Oystercard
   end
 
   def journey_capture
-    #journey = { @entry_station => exitstation }
      @journey_list << @current_journey
      @current_journey = nil 
   end

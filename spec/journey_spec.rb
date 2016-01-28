@@ -2,8 +2,8 @@ require 'journey'
 
 describe Journey do
   subject(:journey) {described_class.new(entry_station)}
-  let(:entry_station) { double :entry_station }
-  let(:exit_station) { double :exit_station }
+  let(:entry_station) { double :entry_station, :name => 'Euston', :zone => 1 }
+  let(:exit_station) { double :exit_station, :name => 'Camden', :zone => 2 }
   let(:oystercard)  { double :oystercard}
 
   context 'at journey initialize' do
@@ -48,9 +48,9 @@ describe Journey do
 
   context 'fare is calculated' do
     describe '#fare' do
-      it 'should return min fare if has entry and exit stations' do
+      it 'returns the correct fare' do
         journey.exit(exit_station)
-        expect(journey.fare).to eq(Journey::FARE_MIN)
+        expect(journey.fare).to eq Journey::FARE_MIN + (entry_station.zone - exit_station.zone).abs * Journey::ZONE_FARE
       end
     end
 
@@ -61,5 +61,6 @@ describe Journey do
     end
 
   end
+
 
 end
